@@ -1,10 +1,3 @@
-# timeline_app.py
-# Streamlit app: Integrated Sampling + Spreading (rolling, coupled by "ready area")
-# - Sampling converts points/day -> ha/day using points/ha
-# - Spreading converts tonnes/day -> ha/day using t/ha
-# - Spreading can only occur on area already sampled (after optional lag)
-# - Visualizes cumulative sampled vs spread over time + backlog
-
 import math
 from datetime import date, timedelta
 
@@ -22,18 +15,42 @@ st.caption("Coupled rolling model: sampling creates 'ready' hectares; spreading 
 st.header("1) Scope")
 
 total_area_ha = st.number_input("Total area to cover (ha)", min_value=0.0, value=100.22, step=0.01)
-total_points = st.number_input("Total sampling points", min_value=0, value=13545, step=1)
+
+ASSUMED_POINTS_PER_HA = 135.15
+
+points_per_ha = ASSUMED_POINTS_PER_HA
+total_points = int(round(total_area_ha * points_per_ha))
+st.write(f"**Implied total sampling points:** {total_points:,}")
+
 
 st.header("2) Sampling (points → ha)")
 
-sampling_people = st.number_input("Sampling crew size (people)", min_value=1, value=5, step=1)
+sampling_people = st.number_input(
+    "Sampling crew size (people)",
+    min_value=1,
+    value=5,
+    step=1
+)
+
 points_per_person_per_week = st.number_input(
     "Sampling throughput (points / person / week)",
     min_value=1.0,
     value=519.0,
     step=1.0,
 )
-workdays_per_week = st.selectbox("Workdays per week", [5, 6, 7], index=0)
+
+st.caption(
+    "Derived from observed field operations: "
+    "2,597 points per week across a 5-person crew "
+    "(≈519 points per person per week)."
+)
+
+workdays_per_week = st.selectbox(
+    "Workdays per week",
+    [5, 6, 7],
+    index=0
+)
+
 
 sampling_contingency_pct = st.number_input(
     "Sampling contingency (%)",
@@ -64,8 +81,22 @@ max_sim_days = st.number_input(
 )
 
 st.subheader("Derived density")
-points_per_ha = (total_points / total_area_ha) if total_area_ha > 0 else 0.0
+
+
 st.write(f"**Points per hectare:** {points_per_ha:.2f} points/ha")
+
+# Implied total points (read-only)
+total_points = int(round(total_area_ha * points_per_ha))
+st.caption(
+    f"Implied total sampling points: {total_points:,} "
+    "(area × assumed density)"
+)
+
+st.caption(
+    "Assumption: sampling density is approximately constant, "
+    "calibrated from observed field operations. "
+    "Total sampling points scale linearly with area."
+)
 
 # ----------------------------
 # DERIVED RATES
