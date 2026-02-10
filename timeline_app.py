@@ -169,8 +169,8 @@ for d in range(int(max_sim_days)):
             "workday": workday,
             "sampled_today_ha": sampled_today,
             "spread_today_ha": spread_today,
-            "sampled_cum_ha": sampled_cum,
-            "spread_cum_ha": spread_cum,
+            "sampled_cumulative_ha": sampled_cum,
+            "spread_cumulative_ha": spread_cum,
             "backlog_ha": backlog,
         }
     )
