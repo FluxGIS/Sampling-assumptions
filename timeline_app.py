@@ -16,7 +16,7 @@ st.header("1) Scope")
 
 total_area_ha = st.number_input("Total area to cover (ha)", min_value=0.0, value=100.22, step=0.01)
 
-ASSUMED_POINTS_PER_HA = 135.15
+ASSUMED_POINTS_PER_HA = 159.68
 
 points_per_ha = ASSUMED_POINTS_PER_HA
 total_points = int(round(total_area_ha * points_per_ha))
